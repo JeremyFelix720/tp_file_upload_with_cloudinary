@@ -4,9 +4,24 @@ import FormRow from '@/components/FormRow';
 import FormLabel from '@/components/FormLabel';
 import InputText from '@/components/InputText';
 import Button from '@/components/Button';
+import { useState } from 'react';
 
 
 function Contact() {
+
+  const [file, setFile] = useState<File | undefined>();
+
+  function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
+    const target = e.target as HTMLInputElement & {
+      files: FileList;
+    }
+  
+    setFile(target.files[0]);
+  }
+  
+  console.log(file)
+
+
   /**
    * handleOnSubmit
    */
@@ -38,6 +53,12 @@ function Contact() {
             <FormLabel htmlFor="message">Message</FormLabel>
             <InputText id="message" name="message" type="text" />
           </FormRow>
+
+          <FormRow className="mb-5">
+            <FormLabel htmlFor="upload">Upload your file</FormLabel>
+            <input id="upload" type="file" name="upload" onChange={handleOnChange} />
+          </FormRow>
+
           <Button>Submit</Button>
         </form>
 
