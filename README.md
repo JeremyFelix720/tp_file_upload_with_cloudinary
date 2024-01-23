@@ -1,5 +1,8 @@
 # Demo Uploader des fichiers avec React
 
+Lien vers le répertoire gitHub :
+https://github.dev/Niirok/demo-react-upload/blob/main/README.md
+
 ## Exercice
 
 ### Installation
@@ -234,7 +237,7 @@ Ensuite, nous devons transmettre cette fonction onDrop à useDropzone :
 
 ```jsx
 const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  onDrop,
+  onDrop
 });
 ```
 

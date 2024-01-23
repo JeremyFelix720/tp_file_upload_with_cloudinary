@@ -4,8 +4,8 @@ import FormRow from '@/components/FormRow';
 import FormLabel from '@/components/FormLabel';
 import InputText from '@/components/InputText';
 import Button from '@/components/Button';
-import { useState } from 'react';
-
+import { useState, useCallback } from 'react';
+import { useDropzone } from "react-dropzone";
 
 function Contact() {
 
@@ -30,6 +30,22 @@ function Contact() {
   console.log(file);
 
 
+  // Gestion du "drag and drop"
+  const onDrop = useCallback((acceptedFiles: Array<File>) => {
+    const file = new FileReader();
+  
+    file.onload = function () {
+      setPreview(file.result);
+    };
+  
+    file.readAsDataURL(acceptedFiles[0]);
+  }, []);
+
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop
+  });
+
+
   /**
    * handleOnSubmit
    */
@@ -37,12 +53,11 @@ function Contact() {
   async function handleOnSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
-
-    if (typeof file === "undefined") return; // Si la condition est remplie, on sort de la fonction.
+    if (typeof acceptedFiles[0] === 'undefined') return; // Si la condition est remplie, on sort de la fonction.
 
     const formData = new FormData();
     
-    formData.append("file", file);
+    formData.append("file", acceptedFiles[0]);
     formData.append("upload_preset", "mugzlh6r"); // Mettre le nom de l'Upload preset (récupéré sur mon compte Cloudinary, dans Settings > Téléchargement) ; vérifier qu'il est "non signé", sinon en créer un autre ou modifier un existant.
     formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY); // Mettre le numéro de la Clé d'API (récupérée sur mon compte Cloudinary) dans le fichier .env (à la racine du projet).
 
@@ -80,17 +95,23 @@ function Contact() {
           </FormRow>
 
           <FormRow className="mb-5">
-            <FormLabel htmlFor="upload">Upload your file</FormLabel>
-            <input
-              id="upload"
-              type="file"
-              name="upload"
-              accept="image/*" // Seules les images sont acceptés.
-              onChange={handleOnChange}
-            />
-            {preview && (
-              <p><img src={preview as string} alt="Aperçu du téléchargement" /></p>
-            )}
+            <div className='drag_and_drop'>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                {isDragActive ? (
+                  <p>Déposez les fichiers ici...</p>
+                ) : (
+                  <p>
+                    Faites glisser des fichiers ici, ou cliquez pour sélectionner des fichiers.
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className='upload_preview'>
+              {preview && (
+                <p><img src={preview as string} alt="Aperçu du téléchargement" /></p>
+              )}
+            </div>
           </FormRow>
 
           <Button>Submit</Button>
@@ -102,3 +123,14 @@ function Contact() {
 }
 
 export default Contact;
+
+/*
+<FormLabel htmlFor="upload">Upload your file</FormLabel>
+<input
+  id="upload"
+  type="file"
+  name="upload"
+  accept="image/*" // Seules les images sont acceptés.
+  onChange={handleOnChange}
+/>
+*/

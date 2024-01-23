@@ -43,3 +43,23 @@ a:hover {
     color: #747bff;
   }
 }
+
+/* CSS PERSO */
+
+.drag_and_drop {
+  border: 1px solid grey;
+  border-radius: 5px;
+  background-color: lavender;
+}
+
+.drag_and_drop p {
+  height: 150px;
+  padding: 10px;
+}
+
+.upload_preview {
+  border: 1px solid grey;
+  border-radius: 5px;
+  max-width: 300px;
+  margin: 20px auto;
+}
