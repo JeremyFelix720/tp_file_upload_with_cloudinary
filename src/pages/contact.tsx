@@ -10,6 +10,7 @@ import { useState } from 'react';
 function Contact() {
 
   const [file, setFile] = useState<File | undefined>();
+  const [preview, setPreview] = (useState<string | ArrayBuffer | null>(null));
 
   function handleOnChange(e: React.FormEvent<HTMLInputElement>) {
     const target = e.target as HTMLInputElement & {
@@ -17,9 +18,16 @@ function Contact() {
     }
   
     setFile(target.files[0]);
+
+    // Prévisualisation de l'image à stocker sur Cloudinary
+    const file = new FileReader;
+    file.onload = function() {
+      setPreview(file.result);
+    }
+    file.readAsDataURL(target.files[0])
   }
   
-  console.log(file)
+  console.log(file);
 
 
   /**
@@ -73,7 +81,16 @@ function Contact() {
 
           <FormRow className="mb-5">
             <FormLabel htmlFor="upload">Upload your file</FormLabel>
-            <input id="upload" type="file" name="upload" onChange={handleOnChange} />
+            <input
+              id="upload"
+              type="file"
+              name="upload"
+              accept="image/*" // Seules les images sont acceptés.
+              onChange={handleOnChange}
+            />
+            {preview && (
+              <p><img src={preview as string} alt="Aperçu du téléchargement" /></p>
+            )}
           </FormRow>
 
           <Button>Submit</Button>

@@ -135,7 +135,7 @@ Nous utiliserons l'API FileReader pour cela et enregistrerons une version d'aper
 Tout d'abord, créons une nouvelle instance de state où nous stockerons cet aperçu :
 
 ```jsx
-const [preview, setPreview] = (useState < string) | ArrayBuffer | (null > null);
+  const [preview, setPreview] = (useState<string | ArrayBuffer | null>(null));
 ```
 
 Nos valeurs potentielles sont une chaîne de caractères, un ArrayBuffer ou null (valeur par défaut), nous voulons donc nous assurer qu'elle est correctement typée.
