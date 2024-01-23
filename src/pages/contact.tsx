@@ -28,6 +28,23 @@ function Contact() {
 
   async function handleOnSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
+
+
+    if (typeof file === "undefined") return; // Si la condition est remplie, on sort de la fonction.
+
+    const formData = new FormData();
+    
+    formData.append("file", file);
+    formData.append("upload_preset", "mugzlh6r"); // Mettre le nom de l'Upload preset (récupéré sur mon compte Cloudinary, dans Settings > Téléchargement) ; vérifier qu'il est "non signé", sinon en créer un autre ou modifier un existant.
+    formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY); // Mettre le numéro de la Clé d'API (récupérée sur mon compte Cloudinary) dans le fichier .env (à la racine du projet).
+
+    const results = await fetch(
+      "https://api.cloudinary.com/v1_1/dw0msmoe5/image/upload", // copier-coller le nom d'utilisateur (affiché en bas à gauche du compte Cloudinary)
+      {
+        method: "POST",
+        body: formData,
+      }
+    ).then((r) => r.json());
   }
 
   return (
