@@ -243,10 +243,84 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
 
 Et maintenant, lorsque nous faisons glisser notre fichier, nous pouvons le voir se mettre à jour avec un aperçu !
 
+```ts
+if ( typeof acceptedFiles[0] === 'undefined' ) return;
+
+const formData = new FormData();
+
+formData.append('file', acceptedFiles[0]);
+formData.append('upload_preset', '<Your Upload Preset>');
+formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+```
+
+## Exercice Partie 2 : dockerisation et mise en prod automatique
+
+Pour cette seconde partie, notre objectif sera de produire le dockerfile de notre application puis d'automatiser le déploiement de cette image docker sur render
+
+### Création du fichier dockerfile et adaptation du fichier de configuration de vite
+
+À la racine de votre projet, vous créerez un ficher Dockerfile que vous pourrez compléter en vous inspirant des fichers dockerfile déjà produits dont voici un exemple.
+
+```md
+
+FROM node:alpine
+
+# Define the working directory, where the application will reside inside the Docker
+WORKDIR /usr/src/app
+
+# Copy package.json to the working directory
+COPY package*.json .
+
+#Run the npm install command to install the application dependencies on Docker
+RUN npm install
+
+# Copy the rest of the application files to Docker, i.e., app.js
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm","run", "dev"]
+```
+Aussi, pour configurer correctement vite dans un environnement dockerisé, il faudra modifier le vite.config.ts en ajoutant les options suivantes
+
+```ts
+  server: {
+    watch: {
+      usePolling: true,
+    },
+    host: true, // needed for the Docker Container port mapping to work
+    strictPort: true,
+    port: 5173, // you can replace this port with any port
+  }
+```
+
+lisez <https://vitejs.dev/config/server-options> pour en apprendre plus sur les options serveurs
+
+### Création d'un DockerHub pour y déposer votre image créée localement
+
+Rappel : pour créer votre image à partir du Dockerfile :
+```bash
+docker build -t [nom_de_votre_image] . //à faire à la racine, là où se situe le Dockerfile
+```
+
+Vérifiez que tout fonctionne en lançant votre container avec l'image nouvellement construite
+
+Ensuite trouvez un moyen de déposer cette image sur un dépôt nouveau DockerHub. Le push sur le dépot se fera manuellement dans le cadre de ce TP
+
+### Création d'un projet render lié à un DockerHub
+
+Faites vous un compte sur render et créer un nouveau projet "Web Service" et sélectionnez "Deploy an existing image from a registry" et dans le champs "Image URL
+The image URL for your external image." Renseignez l'adresse de votre dépôt DockerHub et profitez de votre sité hébergé sur l'ordinateur de quelqu'un d'autre !
+
 ## Sources et aides
 
-📝 Article: https://kdta.io/b0WwW
+📝 Article: <https://kdta.io/b0WwW>
 
-📺 YouTube: https://www.youtube.com/watch?v=8uChP5ivQ1Q
+📺 YouTube: <https://www.youtube.com/watch?v=8uChP5ivQ1Q>
 
-🚀 Demo: https://my-react-file-upload.vercel.app/
+🚀 Demo: <https://my-react-file-upload.vercel.app/>
+
+Dockerisation et configuration : 
+<https://technotrampoline.com/articles/deploying-a-typescript-express-application-to-render/>
+<https://plainenglish.io/blog/step-by-step-guide-to-dockerize-react-app-created-using-vite>
+<https://devsday.ru/blog/details/131954>
